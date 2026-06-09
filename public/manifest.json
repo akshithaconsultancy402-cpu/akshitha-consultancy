@@ -1,0 +1,25 @@
+{
+  "name": "Akshitha Consultancy",
+  "short_name": "Akshitha",
+  "description": "Proprietor: Ramesh Aithagoni — client records, payments & delivery tracking",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f1f5f9",
+  "theme_color": "#4f46e5",
+  "orientation": "any",
+  "lang": "en-IN",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
