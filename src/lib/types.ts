@@ -6,7 +6,7 @@ export interface ClientRecord {
   id: string;
   name: string;
   phone: string;
-  serviceType: ServiceType;
+  serviceType: ServiceType; // Kept this strict union type
   location: string;
   landSize: string;
   surveyPlotNumber: string;
@@ -17,6 +17,11 @@ export interface ClientRecord {
   amountPaid: number;
   status: RecordStatus;
   createdAt: string;
+  brideName?: string;
+  groomName?: string;
+  witness1?: string;
+  witness2?: string;
+  // REMOVED duplicate generic string declaration from here
 }
 
 export const SERVICE_OPTIONS: { value: ServiceType; label: string }[] = [

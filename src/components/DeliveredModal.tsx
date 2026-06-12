@@ -2,20 +2,26 @@
 
 import { formatCurrency } from "@/src/lib/utils";
 import { modalOverlay, modalPanel, transitionTheme } from "@/src/lib/ui-classes";
+// Import your record type definition
+import { ClientRecord } from "../lib/types"; 
 
 interface DeliveredModalProps {
-  clientName: string;
-  amountDue: number;
+  record: ClientRecord; // Fixes: Property 'record' does not exist error
   onConfirm: () => void;
   onCancel: () => void;
 }
 
 export function DeliveredModal({
-  clientName,
-  amountDue,
+  record,
   onConfirm,
   onCancel,
 }: DeliveredModalProps) {
+  // Extract your data and safely calculate the pending balance inline
+  const clientName = record?.name || "Client";
+  const total = Number(record?.totalFee) || 0;
+  const paid = Number(record?.amountPaid) || 0;
+  const amountDue = Math.max(0, total - paid);
+
   return (
     <div className={modalOverlay}>
       <div

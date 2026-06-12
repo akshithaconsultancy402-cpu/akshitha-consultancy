@@ -1,44 +1,25 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
-
-:root {
-  --background: #f1f5f9;
-  --foreground: #0f172a;
-  color-scheme: light;
+@theme {
+  @keyframes fill {
+    0% { width: 0%; }
+    100% { width: 100%; }
+  }
 }
 
-.dark {
-  --background: #0f172a;
-  --foreground: #f1f5f9;
-  color-scheme: dark;
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    -webkit-font-smoothing: antialiased;
+  }
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-html {
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-input[type="search"]::-webkit-search-cancel-button {
-  -webkit-appearance: none;
-}
-
-/* Dark-friendly native date/time inputs */
-.dark input[type="date"],
-.dark input[type="datetime-local"],
-.dark select {
-  color-scheme: dark;
+@media print {
+  header, nav, button, form, .no-print, [role="tablist"], input, select {
+    display: none !important;
+  }
+  body { background: white !important; color: black !important; }
+  table { width: 100% !important; border-collapse: collapse !important; }
+  th, td { border: 1px solid #cbd5e1 !important; padding: 8px !important; color: black !important; }
 }

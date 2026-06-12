@@ -21,7 +21,7 @@ import { formatCurrency, toDatetimeLocalValue } from "@/src/lib/utils";
 interface EditClientModalProps {
   record: ClientRecord;
   onSave: (updated: ClientRecord) => void;
-  onCancel: () => void;
+  onClose: () => void; // Fixes: Property 'onClose' does not exist on type...
 }
 
 interface EditForm {
@@ -56,10 +56,11 @@ function recordToForm(record: ClientRecord): EditForm {
   };
 }
 
-export function EditClientModal({
+// Fix: Use default export signature to ensure Next.js can resolve layout parameters cleanly
+export default function EditClientModal({
   record,
   onSave,
-  onCancel,
+  onClose, 
 }: EditClientModalProps) {
   const [form, setForm] = useState<EditForm>(() => recordToForm(record));
 
@@ -271,7 +272,7 @@ export function EditClientModal({
         <div className={`flex flex-col-reverse gap-2 border-t border-slate-200 px-6 py-4 dark:border-slate-600 sm:flex-row sm:justify-end ${transitionTheme}`}>
           <button
             type="button"
-            onClick={onCancel}
+            onClick={onClose}
             className={`rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700 ${transitionTheme}`}
           >
             Cancel
