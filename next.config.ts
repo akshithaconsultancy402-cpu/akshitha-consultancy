@@ -8,6 +8,8 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
+  turbopack: {}, 
+
   // Your existing configuration stays here
 };
 
