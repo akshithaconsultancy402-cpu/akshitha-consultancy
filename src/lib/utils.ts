@@ -242,7 +242,7 @@ function escapeHtml(text: string) {
     .replace(/"/g, "&quot;");
 }
 
-export function searchRecords(records: ClientRecord[], query: string) {
+export function searchRecords(records: ClientRecord[], query: string, recordFilter: string) {
   const q = query.trim().toLowerCase();
   if (!q) return records;
   return records.filter((r) => {
