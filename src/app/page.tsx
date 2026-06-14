@@ -254,7 +254,20 @@ export default function Page() {
     loadRecords();
   }, []);
   
-  const filteredRecords = useMemo(() => searchRecords(records, search, recordFilter), [records, search, recordFilter]);
+  const filteredRecords = useMemo(() => {
+    let filtered = searchRecords(records, search, recordFilter);
+  
+    if (recordFilter === "today_slots") {
+      filtered = filtered.filter(r => r.bookedSlotDateTime && isToday(r.bookedSlotDateTime));
+    } else if (recordFilter === "total_pending") {
+      filtered = filtered.filter(r => r.status !== "delivered" && r.bookedSlotDateTime);
+    } else if (recordFilter === "delivered") {
+      filtered = filtered.filter(r => r.status === "delivered");
+    }
+  
+    return filtered;
+  }, [records, search, recordFilter]);
+    
   const upcomingAlerts = useMemo(() => getUpcomingSlotAlerts(records), [records]);
   
   const isMarriageSelected = form.serviceType === "marriage"
