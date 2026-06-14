@@ -232,14 +232,34 @@ export default function Page() {
   
     return () => subscription?.unsubscribe();
   }, []);
-
+  
+  // Load records from Supabase on page load
+  useEffect(() => {
+    const loadRecords = async () => {
+      const { data, error } = await supabase
+        .from('records')
+        .select('*')
+        .order('createdAt', { ascending: false });
+  
+      if (error) {
+        console.error("Error loading records:", error);
+        return;
+      }
+  
+      if (data) {
+        setRecords(data as ClientRecord[]);
+      }
+    };
+  
+    loadRecords();
+  }, []);
+  
   const filteredRecords = useMemo(() => searchRecords(records, search, recordFilter), [records, search, recordFilter]);
   const upcomingAlerts = useMemo(() => getUpcomingSlotAlerts(records), [records]);
-
+  
   const isMarriageSelected = form.serviceType === "marriage"
-
+  
   const formAmountDue = useMemo(() => getAmountDue({ totalFee: Number(form.totalFee) || 0, amountPaid: Number(form.amountPaid) || 0 }), [form.totalFee, form.amountPaid]);
-
   const stats = useMemo(() => {
     const totalDue = records.reduce((sum, r) => sum + getAmountDue(r), 0);;
     const todayClients = records.filter(r => isToday(r.createdAt)).length;
