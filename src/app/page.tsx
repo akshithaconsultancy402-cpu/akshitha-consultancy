@@ -76,6 +76,7 @@ export default function Page() {
   const [activeTab, setActiveTab] = useState<string>("dashboard");
   const [form, setForm] = useState({ ...emptyForm, totalFee: 0, amountPaid: 0 });
   const [records, setRecords] = useState<ClientRecord[]>([]);
+  const [recordsLoading, setRecordsLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [recordFilter, setRecordFilter] = useState<"all" | "today_slots" | "total_pending" | "delivered">("all");
   const [deliverTarget, setDeliverTarget] = useState<ClientRecord | null>(null);
@@ -87,7 +88,33 @@ export default function Page() {
   
   const formRef = useRef<HTMLFormElement>(null);
 
-  // --- 2. HANDLERS ---
+  // --- 2. LOAD RECORDS FROM SUPABASE ON PAGE LOAD ---
+  useEffect(() => {
+    const loadRecords = async () => {
+      try {
+        setRecordsLoading(true);
+        const { data, error } = await supabase
+          .from('records')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error("Error loading records:", error);
+          return;
+        }
+
+        setRecords(data || []);
+      } catch (err) {
+        console.error("Failed to load records:", err);
+      } finally {
+        setRecordsLoading(false);
+      }
+    };
+
+    loadRecords();
+  }, []);
+
+  // --- 3. HANDLERS ---
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthLoading(true);
