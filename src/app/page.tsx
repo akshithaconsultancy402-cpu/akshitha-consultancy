@@ -76,7 +76,6 @@ export default function Page() {
   const [activeTab, setActiveTab] = useState<string>("dashboard");
   const [form, setForm] = useState({ ...emptyForm, totalFee: 0, amountPaid: 0 });
   const [records, setRecords] = useState<ClientRecord[]>([]);
-  const [recordsLoading, setRecordsLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [recordFilter, setRecordFilter] = useState<"all" | "today_slots" | "total_pending" | "delivered">("all");
   const [deliverTarget, setDeliverTarget] = useState<ClientRecord | null>(null);
@@ -88,33 +87,7 @@ export default function Page() {
   
   const formRef = useRef<HTMLFormElement>(null);
 
-  // --- 2. LOAD RECORDS FROM SUPABASE ON PAGE LOAD ---
-  useEffect(() => {
-    const loadRecords = async () => {
-      try {
-        setRecordsLoading(true);
-        const { data, error } = await supabase
-          .from('records')
-          .select('*')
-          .order('created_at', { ascending: false });
-
-        if (error) {
-          console.error("Error loading records:", error);
-          return;
-        }
-
-        setRecords(data || []);
-      } catch (err) {
-        console.error("Failed to load records:", err);
-      } finally {
-        setRecordsLoading(false);
-      }
-    };
-
-    loadRecords();
-  }, []);
-
-  // --- 3. HANDLERS ---
+  // --- 2. HANDLERS ---
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthLoading(true);
@@ -192,19 +165,6 @@ export default function Page() {
     setRecords(prev => prev.filter(r => r.id !== record.id));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const newRecord: ClientRecord = {
-      ...form,
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
-      status: "active",
-    } as ClientRecord;
-    setRecords(prev => [newRecord, ...prev]);
-    setForm({ ...emptyForm, totalFee: 0, amountPaid: 0 });
-    formRef.current?.reset();
-  };
-
   const updateField = (field: string, value: any) => setForm(prev => ({ ...prev, [field]: value }));
 
   const handleFormFieldKeyDown = (e: React.KeyboardEvent) => {
@@ -215,6 +175,34 @@ export default function Page() {
       const nextElement = formElements[currentIndex + 1];
       if (nextElement) nextElement.focus();
     }
+  };
+  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const newRecord: ClientRecord = {
+      ...form,
+      id: crypto.randomUUID(),
+      createdAt: new Date().toISOString(),
+      status: "active",
+    } as ClientRecord;
+  
+    // Save to Supabase
+    const { data, error } = await supabase
+      .from('records')
+      .insert([newRecord]);
+  
+    if (error) {
+      console.error("Error saving record:", error);
+      alert("Failed to save record");
+      return;
+    }
+  
+    // Update local state
+    setRecords(prev => [newRecord, ...prev]);
+    setForm({ ...emptyForm, totalFee: 0, amountPaid: 0 });
+    formRef.current?.reset();
+    alert("Record saved successfully!");
   };
 
   // --- 3. DERIVED DATA ---
